@@ -135,5 +135,8 @@ export default () => {
   addRoutes(app);
   addHooks(app);
 
+  console.log('test')
+  console.log(process.env.SESSION_KEY);
+
   return app;
 };
