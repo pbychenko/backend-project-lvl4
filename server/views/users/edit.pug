@@ -1,0 +1,11 @@
+extends ../layouts/application.pug
+
+block header
+  = t('views.users.edit.edit')
+
+block content
+  +formFor()(action=route('users', `${user.id} ?_method=PATCH`) method='post')
+    +input(user, 'email', errors)(type="text")
+    +input(user, 'email', errors)(type="text")
+    +input(user, 'password', errors)(type="password")
+    +submit(user)(value=t('views.users.edit.submit'))
