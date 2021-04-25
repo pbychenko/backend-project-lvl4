@@ -35,8 +35,8 @@ export default (app) => {
       try {
         console.log('here');
         console.log(req.body.data);
-        const user = await app.objection.models.user.query().findById(+req.params.id)
-          .patch({ email: 'dfdf@mail.ru' });
+        const user = await app.objection.models.user.query().findById(+req.params.id);
+        await user.$query().patch(req.body.data);
         // console.log(user);
         // await user.patch({ email: req.body.data.email });
         console.log(';ss')
@@ -44,10 +44,11 @@ export default (app) => {
         req.flash('info', i18next.t('flash.users.edit.success'));
         reply.redirect(app.reverse('root'));
         return reply;
-      } catch ({ data }) {
+      } catch (er) {
         req.flash('error', i18next.t('flash.users.edit.error'));
+        console.log(er)
        
-        reply.render('users/edit', { user: req.body.data, errors: data });
+        reply.render('users/edit', { user: req.body.data, errors: er });
         return reply;
       }
     });
