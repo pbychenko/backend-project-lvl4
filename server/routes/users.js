@@ -35,15 +35,18 @@ export default (app) => {
       try {
         console.log('here');
         console.log(req.body.data);
-        console.log(req.params);
         const user = await app.objection.models.user.query().findById(+req.params.id)
-          .patch(req.body.data);
-        await app.objection.models.user.query().insert(user);
+          .patch({ email: 'dfdf@mail.ru' });
+        // console.log(user);
+        // await user.patch({ email: req.body.data.email });
+        console.log(';ss')
+        // await app.objection.models.user.query().insert(user);
         req.flash('info', i18next.t('flash.users.edit.success'));
         reply.redirect(app.reverse('root'));
         return reply;
       } catch ({ data }) {
         req.flash('error', i18next.t('flash.users.edit.error'));
+       
         reply.render('users/edit', { user: req.body.data, errors: data });
         return reply;
       }
