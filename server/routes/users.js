@@ -36,7 +36,7 @@ export default (app) => {
         console.log('here');
         console.log(req.body.data);
         console.log(req.params);
-        const user = await app.objection.models.user.query().findById(req.params.id)
+        const user = await app.objection.models.user.query().findById(+req.params.id)
           .patch(req.body.data);
         await app.objection.models.user.query().insert(user);
         req.flash('info', i18next.t('flash.users.edit.success'));
