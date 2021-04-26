@@ -14,9 +14,13 @@ export default (app) => {
       reply.render('users/new', { user });
     })
     .get('/users/:id/edit', { name: 'editUser' }, async (req, reply) => {
-      // console.log(user)
-      const user = await app.objection.models.user.query().findById(req.params.id);
-      reply.render('users/edit', { user });
+      if (req.user.id === +req.params.id) {
+        const user = await app.objection.models.user.query().findById(req.params.id);
+        reply.render('users/edit', { user });
+      } else {
+        req.flash('error', i18next.t('flash.authError'));
+        reply.redirect(app.reverse('users'));
+      }
     })
     .post('/users', async (req, reply) => {
       try {
@@ -34,9 +38,13 @@ export default (app) => {
     })
     .patch('/users/:id', { name: 'updateUser' }, async (req, reply) => {
       try {
-        const user = await app.objection.models.user.query().findById(+req.params.id);
-        await user.$query().patch(req.body.data);
-        req.flash('info', i18next.t('flash.users.edit.success'));
+        if (req.user.id === +req.params.id) {
+          const user = await app.objection.models.user.query().findById(+req.params.id);
+          await user.$query().patch(req.body.data);
+          req.flash('info', i18next.t('flash.users.edit.success'));
+        } else {
+          req.flash('info', 'Иди нахуй');
+        }
         reply.redirect(app.reverse('root'));
         return reply;
       } catch (er) {
