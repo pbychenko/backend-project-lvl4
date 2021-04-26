@@ -53,5 +53,15 @@ export default (app) => {
         reply.render('users/edit', { user: req.body.data, errors: er });
         return reply;
       }
+    })
+    .delete('/users/:id', async (req, reply) => {
+      if (req.user.id === +req.params.id) {
+        await app.objection.models.user.query().deleteById(+req.params.id);
+        req.flash('info', i18next.t('flash.users.delete.success'));
+      } else {
+        req.flash('info', i18next.t('flash.users.delete.error'));
+      }
+      reply.redirect(app.reverse('root'));
+      return reply;
     });
 };
