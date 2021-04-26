@@ -57,8 +57,11 @@ module.exports = {
           signUp: 'Регистрация',
         },
         edit: {
-          submit: 'Сохранить',
+          submit: 'Редактировать',
           edit: 'Редактирование',
+        },
+        delete: {
+          submit: 'Удалить',
         },
       },
       welcome: {
