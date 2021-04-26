@@ -25,29 +25,23 @@ export default (app) => {
         req.flash('info', i18next.t('flash.users.create.success'));
         reply.redirect(app.reverse('root'));
         return reply;
-      } catch ({ data }) {
+      } catch (er) {
         req.flash('error', i18next.t('flash.users.create.error'));
-        reply.render('users/new', { user: req.body.data, errors: data });
+        console.log(er);
+        reply.render('users/new', { user: req.body.data, errors: er.data });
         return reply;
       }
     })
     .patch('/users/:id', { name: 'updateUser' }, async (req, reply) => {
       try {
-        console.log('here');
-        console.log(req.body.data);
         const user = await app.objection.models.user.query().findById(+req.params.id);
         await user.$query().patch(req.body.data);
-        // console.log(user);
-        // await user.patch({ email: req.body.data.email });
-        console.log(';ss')
-        // await app.objection.models.user.query().insert(user);
         req.flash('info', i18next.t('flash.users.edit.success'));
         reply.redirect(app.reverse('root'));
         return reply;
       } catch (er) {
         req.flash('error', i18next.t('flash.users.edit.error'));
-        console.log(er)
-       
+        console.log(er);
         reply.render('users/edit', { user: req.body.data, errors: er });
         return reply;
       }

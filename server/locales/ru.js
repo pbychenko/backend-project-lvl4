@@ -42,9 +42,13 @@ module.exports = {
       },
       users: {
         id: 'ID',
+        fullName: 'Полное имя',
         email: 'Email',
         createdAt: 'Дата создания',
         new: {
+          firstName: 'Имя',
+          lastName: 'Фамилия',
+          password: 'Пароль',
           submit: 'Сохранить',
           signUp: 'Регистрация',
         },
