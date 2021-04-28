@@ -15,3 +15,8 @@ block content
           td= `${user.firstName} ${user.lastName}`
           td= user.email
           td= formatDate(user.createdAt)
+          td
+            a.nav-link(href=route('editUser', { id: +`${user.id}`}))= t('views.users.edit.submit')
+            +formFor()(action=route('deleteUser', { id: +`${user.id}`}) method='post')
+              input(type='hidden' name='_method' value='delete')
+              +submit(user)(value=t('views.users.delete.submit'))

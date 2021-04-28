@@ -6,4 +6,5 @@ dist/
 tmp/
 temp/
 database.sqlite
+package-lock
 .env
