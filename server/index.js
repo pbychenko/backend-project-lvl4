@@ -97,7 +97,7 @@ const registerPlugins = (app) => {
   });
 
   fastifyPassport.registerUserDeserializer(
-    (user) => app.objection.models.user.query().findById(user.id) || false,
+    (user) => app.objection.models.user.query().findById(user.id),
   );
   fastifyPassport.registerUserSerializer((user) => Promise.resolve(user));
   fastifyPassport.use(new FormStrategy('form', app));
@@ -134,11 +134,6 @@ export default () => {
   setUpStaticAssets(app);
   addRoutes(app);
   addHooks(app);
-
-  // console.log('test')
-  // console.log(process.env.NODE_ENV);
-  // console.log(mode);
-  // console.log(process.env.SESSION_KEY);
 
   return app;
 };

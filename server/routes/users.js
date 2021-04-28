@@ -14,7 +14,7 @@ export default (app) => {
       reply.render('users/new', { user });
     })
     .get('/users/:id/edit', { name: 'editUser' }, async (req, reply) => {
-      if (req.user && req.user.id === +req.params.id) {
+      if (req.isAuthenticated() && req.user.id === +req.params.id) {
         const user = await app.objection.models.user.query().findById(req.params.id);
         reply.render('users/edit', { user });
       } else {
@@ -38,7 +38,7 @@ export default (app) => {
     })
     .patch('/users/:id', { name: 'updateUser' }, async (req, reply) => {
       try {
-        if (req.user && req.user.id === +req.params.id) {
+        if (req.isAuthenticated() && req.user.id === +req.params.id) {
           const user = await app.objection.models.user.query().findById(+req.params.id);
           await user.$query().patch(req.body.data);
           req.flash('info', i18next.t('flash.users.edit.success'));
@@ -56,7 +56,8 @@ export default (app) => {
     })
     .delete('/users/:id', { name: 'deleteUser' }, async (req, reply) => {
       try {
-        if (req.user && req.user.id === +req.params.id) {
+        if (req.isAuthenticated() && req.user.id === +req.params.id) {
+          req.logOut();
           await app.objection.models.user.query().deleteById(+req.params.id);
           req.flash('info', i18next.t('flash.users.delete.success'));
         } else {
