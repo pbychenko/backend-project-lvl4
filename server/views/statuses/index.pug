@@ -1,0 +1,21 @@
+extends ../layouts/application.pug
+
+block content
+  a.nav-link(href=route('newStatus'))= t('views.statuses.new.submit')
+  table.table.table-striped
+    thead
+      tr
+        th= t('views.statuses.id')
+        th= t('views.statuses.name')
+        th= t('views.statuses.createdAt')
+    tbody
+      each status in statuses
+        tr          
+          td= status.id
+          td= status.name
+          td= formatDate(status.createdAt)
+          td
+            a.nav-link(href=route('editStatus', { id: +`${status.id}`}))= t('views.statuses.edit.submit')
+            +formFor()(action=route('deleteStatus', { id: +`${status.id}`}) method='post')
+              input(type='hidden' name='_method' value='delete')
+              +submit(user)(value=t('views.statuses.delete.submit'))

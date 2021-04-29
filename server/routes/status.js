@@ -2,70 +2,84 @@ import i18next from 'i18next';
 
 export default (app) => {
   app
-    .get('/statuses', { name: 'users' }, async (req, reply) => {
-      const users = await app.objection.models.user.query();
-      reply.render('users/index', { users });
-      return reply;
-    })
-    .get('/statuses/new', { name: 'newStatus' }, (req, reply) => {
-      const user = new app.objection.models.user();
-      reply.render('users/new', { user });
-    })
-    .get('/statuses/:id/edit', { name: 'editStatus' }, async (req, reply) => {
-      if (req.isAuthenticated() && req.user.id === +req.params.id) {
-        const user = await app.objection.models.user.query().findById(req.params.id);
-        reply.render('users/edit', { user });
+    .get('/statuses', { name: 'statuses' }, async (req, reply) => {
+      if (req.isAuthenticated()) {
+        try {
+          const statuses = await app.objection.models.status.query();
+          reply.render('statuses/index', { statuses });
+        } catch (er) {
+          console.log(er);
+        }
       } else {
         req.flash('error', i18next.t('flash.authError'));
-        reply.redirect(app.reverse('users'));
+        reply.redirect(app.reverse('root'));
+      }
+    })
+    .get('/statuses/new', { name: 'newStatus' }, (req, reply) => {
+      if (req.isAuthenticated()) {
+        const status = new app.objection.models.user();
+        reply.render('statuses/new', { status });
+      } else {
+        req.flash('error', i18next.t('flash.authError'));
+        reply.redirect(app.reverse('root'));
+      }
+    })
+    .get('/statuses/:id/edit', { name: 'editStatus' }, async (req, reply) => {
+      if (req.isAuthenticated()) {
+        const status = await app.objection.models.status.query().findById(+req.params.id);
+        reply.render('statuses/edit', { status });
+      } else {
+        req.flash('error', i18next.t('flash.authError'));
+        reply.redirect(app.reverse('root'));
       }
     })
     .post('/statuses', async (req, reply) => {
       try {
-        const user = await app.objection.models.user.fromJson(req.body.data);
-        await app.objection.models.user.query().insert(user);
-        req.flash('info', i18next.t('flash.users.create.success'));
-        reply.redirect(app.reverse('root'));
-        return reply;
+        const status = await app.objection.models.status.fromJson(req.body.data);
+        await app.objection.models.status.query().insert(status);
+        req.flash('info', i18next.t('flash.statuses.create.success'));
+        reply.redirect(app.reverse('statuses'));
       } catch (er) {
-        req.flash('error', i18next.t('flash.users.create.error'));
+        req.flash('error', i18next.t('flash.statuses.create.error'));
         console.log(er);
-        reply.render('users/new', { user: req.body.data, errors: er.data });
-        return reply;
+        reply.render('statuses/new', { status: req.body.data, errors: er.data });
       }
     })
     .patch('/statuses/:id', { name: 'updateStatus' }, async (req, reply) => {
-      try {
-        if (req.isAuthenticated() && req.user.id === +req.params.id) {
-          const user = await app.objection.models.user.query().findById(+req.params.id);
-          await user.$query().patch(req.body.data);
-          req.flash('info', i18next.t('flash.users.edit.success'));
-        } else {
-          req.flash('info', 'Иди нахуй');
+      if (req.isAuthenticated()) {
+        try {
+          const status = await app.objection.models.status.query().findById(+req.params.id);
+          await status.$query().patch(req.body.data);
+          req.flash('info', i18next.t('flash.statuses.edit.success'));
+          reply.redirect(app.reverse('statuses'));
+          return reply;
+        } catch (er) {
+          req.flash('error', i18next.t('flash.statuses.edit.error'));
+          console.log(er);
+          reply.render('statuses/edit', { status: req.body.data, errors: er.data });
+          return reply;
         }
+      } else {
+        req.flash('error', i18next.t('flash.authError'));
         reply.redirect(app.reverse('root'));
-        return reply;
-      } catch (er) {
-        req.flash('error', i18next.t('flash.users.edit.error'));
-        console.log(er);
-        reply.render('users/edit', { user: req.body.data, errors: er });
         return reply;
       }
     })
-    .delete('/statuses/:id', { name: 'deleteUser' }, async (req, reply) => {
-      try {
-        if (req.isAuthenticated() && req.user.id === +req.params.id) {
-          req.logOut();
-          await app.objection.models.user.query().deleteById(+req.params.id);
-          req.flash('info', i18next.t('flash.users.delete.success'));
-        } else {
-          req.flash('info', i18next.t('flash.users.delete.error'));
+    .delete('/statuses/:id', { name: 'deleteStatus' }, async (req, reply) => {
+      if (req.isAuthenticated()) {
+        try {
+          await app.objection.models.status.query().deleteById(+req.params.id);
+          req.flash('info', i18next.t('flash.statuses.delete.success'));
+        } catch (er) {
+          console.log(er);
+          req.flash('info', i18next.t('flash.statuses.delete.error'));
         }
-      } catch (er) {
-        console.log(er);
-        req.flash('info', i18next.t('flash.users.delete.error'));
+      } else {
+        req.flash('error', i18next.t('flash.authError'));
+        reply.redirect(app.reverse('root'));
       }
-      reply.redirect(app.reverse('users'));
+
+      reply.redirect(app.reverse('statuses'));
       return reply;
     });
 };
