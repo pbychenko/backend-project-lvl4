@@ -95,6 +95,25 @@ module.exports = {
           submit: 'Удалить',
         },
       },
+      tasks: {
+        id: 'ID',
+        name: 'Наименование',
+        status: 'Статус',
+        creator: 'Автор',
+        executor: 'Исполнитель',
+        createdAt: 'Дата создания',
+        new: {
+          submit: 'Создать задачу',
+          signUp: 'Создание задачи',
+        },
+        edit: {
+          submit: 'Редактировать',
+          edit: 'Редактирование',
+        },
+        delete: {
+          submit: 'Удалить',
+        },
+      },
       welcome: {
         index: {
           hello: 'Привет от Хекслета!',

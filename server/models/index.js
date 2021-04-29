@@ -2,8 +2,10 @@
 
 import User from './User.js';
 import Status from './Status';
+import Task from './Task';
 
 export default [
   User,
   Status,
+  Task,
 ];
