@@ -47,6 +47,7 @@ module.exports = {
       application: {
         users: 'Пользователи',
         statuses: 'Статусы',
+        tasks: 'Задачи',
         signIn: 'Вход',
         signUp: 'Регистрация',
         signOut: 'Выход',
@@ -103,6 +104,10 @@ module.exports = {
         executor: 'Исполнитель',
         createdAt: 'Дата создания',
         new: {
+          name: 'Наименование',
+          description: 'Описание',
+          status: 'Статус',
+          executor: 'Исполнитель',
           submit: 'Создать задачу',
           signUp: 'Создание задачи',
         },
