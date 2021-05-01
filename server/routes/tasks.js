@@ -6,7 +6,7 @@ export default (app) => {
       if (req.isAuthenticated()) {
         try {
           const tasks = await app.objection.models.task.query();
-          reply.render('statuses/index', { tasks });
+          reply.render('tasks/index', { tasks });
         } catch (er) {
           console.log(er);
         }
@@ -15,10 +15,14 @@ export default (app) => {
         reply.redirect(app.reverse('root'));
       }
     })
-    .get('/tasks/new', { name: 'newTask' }, (req, reply) => {
+    .get('/tasks/new', { name: 'newTask' }, async (req, reply) => {
       if (req.isAuthenticated()) {
         const task = new app.objection.models.task();
-        reply.render('tasks/new', { task });
+        const statuses = await app.objection.models.status.query();
+        const users = await app.objection.models.user.query();
+        console.log('список статусов');
+        console.log(statuses);
+        reply.render('tasks/new', { statuses });
       } else {
         req.flash('error', i18next.t('flash.authError'));
         reply.redirect(app.reverse('root'));

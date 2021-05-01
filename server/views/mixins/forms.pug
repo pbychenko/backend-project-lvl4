@@ -22,6 +22,25 @@ mixin input(entity, propertyName, labelName, errors = {})
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 
+mixin select(entity, propertyName, labelName, errors = {})
+  - propertyErrors = _.get(errors, propertyName)
+  - classLine = 'form-control' + (_.isEmpty(errors) ? '' : ' is-invalid')
+  - inputId = getInputId(propertyName)
+  .form-group(class=(errors[propertyName] && 'has-danger'))
+    label(
+      for= inputId
+    )= labelName
+    select(
+      id= inputId
+      name=getInputName(propertyName)
+      class=classLine
+      value=_.get(entity, propertyName, '')
+        each el in entity
+          option='tet'
+    )&attributes(attributes)
+    if !_.isEmpty(propertyErrors)
+      .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
+
 mixin submit(form = null)
   .form-group
     input(class='btn btn-primary' type='submit')&attributes(attributes)

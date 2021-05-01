@@ -1,7 +1,7 @@
 extends ../layouts/application.pug
 
 block content
-  a.nav-link(href=route('newStatus'))= t('views.tasks.new.submit')
+  a.nav-link(href=route('newTask'))= t('views.tasks.new.submit')
   table.table.table-striped
     thead
       tr
@@ -12,16 +12,17 @@ block content
         th= t('views.tasks.executor')
         th= t('views.tasks.createdAt')
     tbody
-      each task in tasks
-        tr          
-          td= task.id
-          td= task.name
-          td= task.status
-          td= task.creator
-          td= task.executor
-          td= formatDate(.createdAt)
-          td
-            a.nav-link(href=route('editTask', { id: +`${task.id}`}))= t('views.tasks.edit.submit')
-            +formFor()(action=route('deleteTask', { id: +`${task.id}`}) method='post')
-              input(type='hidden' name='_method' value='delete')
-              +submit(user)(value=t('views.tasks.delete.submit'))
+      if tasks.length > 0
+        each task in tasks
+          tr          
+            td= task.id
+            td= task.name
+            td= task.status
+            td= task.creator
+            td= task.executor
+            td= formatDate(task.createdAt)
+            td
+              a.nav-link(href=route('editTask', { id: +`${task.id}`}))= t('views.tasks.edit.submit')
+              +formFor()(action=route('deleteTask', { id: +`${task.id}`}) method='post')
+                input(type='hidden' name='_method' value='delete')
+                +submit(user)(value=t('views.tasks.delete.submit'))

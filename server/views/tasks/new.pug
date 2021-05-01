@@ -4,9 +4,10 @@ block header
   = t('views.tasks.new.signUp')
 
 block content
+  p=statuses
   +formFor()(action=route('tasks') method='post')
     +input(task, 'name', t('views.tasks.name'), errors)(type="text")
     +input(task, 'description', t('views.tasks.new.description'), errors)(type="text")
-    +input(task, 'status', t('views.tasks.new.status'), errors)(type="text")
+    +select(statuses, 'status', t('views.tasks.new.status'), errors)(type="t")
     +input(task, 'executor', t('views.tasks.new.executor'), errors)(type="text")
     +submit(task)(value=t('views.tasks.new.submit'))
