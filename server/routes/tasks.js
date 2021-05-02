@@ -65,7 +65,7 @@ export default (app) => {
     })
     .post('/tasks', async (req, reply) => {
       try {
-        // console.log(req.body.data);
+        console.log(req.body.data);
         req.body.data.statusId = +req.body.data.statusId;
 
         if (req.body.data.executorId) {
@@ -80,7 +80,7 @@ export default (app) => {
         reply.redirect(app.reverse('tasks'));
       } catch (er) {
         req.flash('error', i18next.t('flash.tasks.create.error'));
-        console.log(er.data);
+        // console.log(er.data);
         const statuses = await app.objection.models.status.query();
         const users = await app.objection.models.user.query();
         reply.render('tasks/new', { task: req.body.data, statuses, users, errors: er.data });
