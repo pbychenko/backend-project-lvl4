@@ -35,7 +35,7 @@ mixin select(entity, propertyName, labelName, errors = {}, options, optionName, 
       id= inputId
       name=getInputName(propertyName)
       class=classLine
-    )&attributes(attributes)
+    )&attributes(attributes) 
       option(selected)
       each option in options
         option(value=option.id selected=(option.id ===selectedNumber))
@@ -43,9 +43,9 @@ mixin select(entity, propertyName, labelName, errors = {}, options, optionName, 
             =option.name
           else
             =option.fullName()
-
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
+   
       
 
     

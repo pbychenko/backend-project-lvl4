@@ -80,8 +80,10 @@ export default (app) => {
         reply.redirect(app.reverse('tasks'));
       } catch (er) {
         req.flash('error', i18next.t('flash.tasks.create.error'));
-        console.log(er);
-        reply.render('tasks/new', { task: req.body.data, errors: er.data });
+        console.log(er.data);
+        const statuses = await app.objection.models.status.query();
+        const users = await app.objection.models.user.query();
+        reply.render('tasks/new', { task: req.body.data, statuses, users, errors: er.data });
       }
     })
     .patch('/tasks/:id', { name: 'updateTask' }, async (req, reply) => {
