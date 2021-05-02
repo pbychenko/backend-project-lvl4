@@ -67,12 +67,19 @@ export default (app) => {
     })
     .delete('/statuses/:id', { name: 'deleteStatus' }, async (req, reply) => {
       if (req.isAuthenticated()) {
-        try {
-          await app.objection.models.status.query().deleteById(+req.params.id);
-          req.flash('info', i18next.t('flash.statuses.delete.success'));
-        } catch (er) {
-          console.log(er);
-          req.flash('info', i18next.t('flash.statuses.delete.error'));
+        const status = await app.objection.models.status.query().findById(+req.params.id);
+        const tasks = await status.$relatedQuery('tasks');
+        if (tasks.length === 0) {
+          try {
+            await app.objection.models.status.query().deleteById(+req.params.id);
+            req.flash('info', i18next.t('flash.statuses.delete.success'));
+          } catch (er) {
+            console.log(er);
+            req.flash('info', i18next.t('flash.statuses.delete.error'));
+          }
+        } else {
+          req.flash('error', i18next.t('flash.statuses.tasksError'));
+          reply.redirect(app.reverse('statuses'));
         }
       } else {
         req.flash('error', i18next.t('flash.authError'));

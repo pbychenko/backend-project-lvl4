@@ -35,6 +35,10 @@ export default class User extends unique(Model) {
     return encrypt(password) === this.passwordDigest;
   }
 
+  fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+
   static relationMappings = {
     createdTasks: {
       relation: Model.HasManyRelation,

@@ -22,10 +22,11 @@ mixin input(entity, propertyName, labelName, errors = {})
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 
-mixin select(entity, propertyName, labelName, errors = {})
+mixin select(entity, propertyName, labelName, errors = {}, options, optionName, selectedNumber,)
   - propertyErrors = _.get(errors, propertyName)
   - classLine = 'form-control' + (_.isEmpty(errors) ? '' : ' is-invalid')
   - inputId = getInputId(propertyName)
+  - isStatus = (optionName === 'status')
   .form-group(class=(errors[propertyName] && 'has-danger'))
     label(
       for= inputId
@@ -34,12 +35,20 @@ mixin select(entity, propertyName, labelName, errors = {})
       id= inputId
       name=getInputName(propertyName)
       class=classLine
-      value=_.get(entity, propertyName, '')
-        each el in entity
-          option='tet'
     )&attributes(attributes)
+      option(selected)
+      each option in options
+        option(value=option.id selected=(option.id ===selectedNumber))
+          if isStatus
+            =option.name
+          else
+            =option.fullName()
+
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
+      
+
+    
 
 mixin submit(form = null)
   .form-group

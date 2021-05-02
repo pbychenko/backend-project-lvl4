@@ -1,8 +1,8 @@
 // @ts-check
 
 import { Model } from 'objection';
-import objectionUnique from 'objection-unique';
 import path from 'path';
+import objectionUnique from 'objection-unique';
 
 const unique = objectionUnique({ fields: ['email'] });
 

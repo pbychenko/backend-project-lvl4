@@ -1,10 +1,14 @@
 extends ../layouts/application.pug
 
 block header
-  = t('views.statuses.edit.edit')
+  = t('views.tasks.edit.edit')
 
 block content
-  +formFor()(action=route('updateStatus', { id: +`${status.id}`}) method='post')
+  //- p= typeof selectedStatus
+  +formFor()(action=route('updateTask', { id: +`${task.id}`}) method='post')
     input(type='hidden' name='_method' value='patch')
-    +input(status, 'name', t('views.statuses.name'), errors)(type="text")
-    +submit(status)(value=t('views.statuses.edit.submit'))
+    +input(task, 'name', t('views.tasks.name'), errors)(type="text")
+    +input(task, 'description', t('views.tasks.new.description'), errors)(type="textarea")
+    +select(task, 'statusId', t('views.tasks.new.status'), errors, statuses, 'status', selectedStatus)
+    +select(task, 'executorId', t('views.tasks.new.executor'), errors, users, 'user', selectedExecutor)
+    +submit(task)(value=t('views.tasks.edit.submit'))
