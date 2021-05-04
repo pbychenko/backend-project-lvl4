@@ -42,6 +42,21 @@ module.exports = {
         },
         tasksError: 'Есть задачи в этом статусе',
       },
+      labels: {
+        create: {
+          error: 'Не удалось создать метку',
+          success: 'Метка успешно создана',
+        },
+        edit: {
+          error: 'Не удалось изменить метку',
+          success: 'Метка успешно изменена',
+        },
+        delete: {
+          error: 'Не удалось удалить метку',
+          success: 'Метка успешно удалена',
+        },
+        labelsError: 'Есть задачи с этой меткой',
+      },
       tasks: {
         create: {
           error: 'Не удалось создать задачу',
@@ -64,6 +79,7 @@ module.exports = {
         users: 'Пользователи',
         statuses: 'Статусы',
         tasks: 'Задачи',
+        labels: 'Метки',
         signIn: 'Вход',
         signUp: 'Регистрация',
         signOut: 'Выход',
@@ -130,6 +146,22 @@ module.exports = {
         edit: {
           submit: 'Редактировать',
           edit: 'Редактирование',
+        },
+        delete: {
+          submit: 'Удалить',
+        },
+      },
+      labels: {
+        id: 'ID',
+        name: 'Наименование',
+        createdAt: 'Дата создания',
+        new: {
+          submit: 'Создать метку',
+          signUp: 'Создание метки',
+        },
+        edit: {
+          submit: 'Изменить',
+          edit: 'Изменение метки',
         },
         delete: {
           submit: 'Удалить',

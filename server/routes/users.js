@@ -42,8 +42,6 @@ export default (app) => {
           const user = await app.objection.models.user.query().findById(+req.params.id);
           await user.$query().patch(req.body.data);
           req.flash('info', i18next.t('flash.users.edit.success'));
-        } else {
-          req.flash('info', 'Иди нахуй');
         }
         reply.redirect(app.reverse('root'));
         return reply;

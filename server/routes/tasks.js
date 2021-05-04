@@ -21,7 +21,7 @@ export default (app) => {
             }
 
             // console.log(taskStatus);
-            return { ...task, status: taskStatus.name, creator: taskCreator.fullNam };
+            return { ...task, status: taskStatus.name, creator: taskCreator.fullName() };
           }));
 
           reply.render('tasks/index', { tasks: tasksForIndex });
@@ -75,8 +75,12 @@ export default (app) => {
           req.body.data.executorId = +req.body.data.executorId;
         }
 
+        console.log(req.user);
+
         req.body.data.creatorId = req.user.id;
+        console.log(req.body.data);
         const task = await app.objection.models.task.fromJson(req.body.data);
+        console.log(task);
 
         await app.objection.models.task.query().insert(task);
         req.flash('info', i18next.t('flash.tasks.create.success'));
@@ -86,6 +90,7 @@ export default (app) => {
         console.log(er.data);
         const statuses = await app.objection.models.status.query();
         const users = await app.objection.models.user.query();
+        // req.body.data.creatorId = req.user.id;
         reply.render('tasks/new', { task: req.body.data, statuses,
           users, errors: er.data });
       }

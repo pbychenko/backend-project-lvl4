@@ -21,7 +21,6 @@ export default class Task extends unique(Model) {
         description: { type: 'string', minLength: 1, maxLength: 400 },
         statusId: { type: 'integer' },
         creatorId: { type: 'integer' },
-        // executorId: { type: 'integer' },
       },
     };
   }
@@ -49,6 +48,18 @@ export default class Task extends unique(Model) {
       join: {
         from: 'tasks.executorId',
         to: 'users.id',
+      },
+    },
+    labels: {
+      relation: Model.ManyToManyRelation,
+      modelClass: path.join(__dirname, 'Label'),
+      join: {
+        from: 'tasks.id',
+        through: {
+          from: 'labels_tasks.taskId',
+          to: 'labels_tasks.labelId',
+        },
+        to: 'labels.id',
       },
     },
   }
