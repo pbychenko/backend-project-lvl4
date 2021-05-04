@@ -21,7 +21,7 @@ export default class Task extends unique(Model) {
         description: { type: 'string', minLength: 1, maxLength: 400 },
         statusId: { type: 'integer' },
         creatorId: { type: 'integer' },
-        executorId: { type: 'integer' },
+        // executorId: { type: 'integer' },
       },
     };
   }

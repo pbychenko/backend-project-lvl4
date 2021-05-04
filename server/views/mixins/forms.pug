@@ -38,7 +38,7 @@ mixin select(entity, propertyName, labelName, errors = {}, options, optionName, 
     )&attributes(attributes) 
       option(selected)
       each option in options
-        option(value=option.id selected=(option.id ===selectedNumber))
+        option(value=option.id selected=(option.id === selectedNumber))
           if isStatus
             =option.name
           else
