@@ -1,4 +1,6 @@
 import i18next from 'i18next';
+import { forEach } from 'lodash';
+import { transaction } from 'objection';
 
 export default (app) => {
   app
@@ -64,33 +66,47 @@ export default (app) => {
         reply.redirect(app.reverse('root'));
       }
     })
-    .post('/tasks', async (req, reply) => {
-      try {
-        console.log(req.body.data);
+    .post('/tasks', async (req, reply) => {      
+      console.log(req.body.data);
+      
+      const taskData = {
+        name: req.body.data.name,
+        description: req.body.data.description,
+        creatorId: req.user.id,
+      };
 
+      if (req.body.data.statusId) {
+        taskData.statusId = +req.body.data.statusId;
+      }
+
+      if (req.body.data.executorId) {
+        taskData.executorId = +req.body.data.executorId;
+      }
+      // console.log(req.body.data);
+      const task = await app.objection.models.task.fromJson(taskData);
+      // console.log(task);
+      try {        
+      // await app.objection.models.task.query().insert(task);
+      // console.log(db);
+        const modelTask = app.objection.models.task;
         if (req.body.data.labels.length > 0) {
           const labelsIds = req.body.data.labels.map((el) => +el);
         }
+        await transaction(modelTask, async (modelTask, trx) => {             
+          const dbTask = await trx('tasks').insert(task);
+          // console.log(dbTask);
+          if (!labelsIds) {
+            return dbTask;
+          }
+          
+          const dbLabels = await Promise.all(labelsIds.map(async (id) => {
+            const dbLabel = await dbTask.$relatedQuery('labels').insert({labelId: id});
+            return dbLabel;
+          }));
 
-        const taskData = {
-          name: req.body.data.name,
-          description: req.body.data.description,
-          creatorId: req.user.id,
-        };
-
-        if (req.body.data.statusId) {
-          taskData.statusId = +req.body.data.statusId;
-        }
-
-        if (req.body.data.executorId) {
-          taskData.executorId = +req.body.data.executorId;
-        }
-        // console.log(req.body.data);
-        const task = await app.objection.models.task.fromJson(taskData);
-        // console.log(task);
-
-        await app.objection.models.task.query().insert(task);
-        // console.log(db);
+        
+          return dbLabels;
+        });
 
         req.flash('info', i18next.t('flash.tasks.create.success'));
         reply.redirect(app.reverse('tasks'));
