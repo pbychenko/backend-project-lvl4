@@ -57,6 +57,7 @@ export default (app) => {
           req.flash('error', i18next.t('flash.statuses.edit.error'));
           console.log(er);
           reply.render('statuses/edit', { status: req.body.data, errors: er.data });
+          // reply.redirect(app.reverse('editStatus', { id: req.params.id }));
           return reply;
         }
       } else {

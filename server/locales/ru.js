@@ -140,6 +140,7 @@ module.exports = {
           description: 'Описание',
           status: 'Статус',
           executor: 'Исполнитель',
+          labels: 'Метки',
           submit: 'Создать задачу',
           signUp: 'Создание задачи',
         },

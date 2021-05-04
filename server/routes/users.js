@@ -15,7 +15,7 @@ export default (app) => {
     })
     .get('/users/:id/edit', { name: 'editUser' }, async (req, reply) => {
       if (req.isAuthenticated() && req.user.id === +req.params.id) {
-        const user = await app.objection.models.user.query().findById(req.params.id);
+        const user = await app.objection.models.user.query().findById(+req.params.id);
         reply.render('users/edit', { user });
       } else {
         req.flash('error', i18next.t('flash.authError'));
@@ -40,6 +40,7 @@ export default (app) => {
       try {
         if (req.isAuthenticated() && req.user.id === +req.params.id) {
           const user = await app.objection.models.user.query().findById(+req.params.id);
+          console.log(req.body.data);
           await user.$query().patch(req.body.data);
           req.flash('info', i18next.t('flash.users.edit.success'));
         }
@@ -47,9 +48,11 @@ export default (app) => {
         return reply;
       } catch (er) {
         req.flash('error', i18next.t('flash.users.edit.error'));
-        console.log(er);
-        reply.render('users/edit', { user: req.body.data, errors: er });
-        return reply;
+        // console.log(er);
+        // console.log(req.body.data)
+        // console.log(req.params)
+        // reply.render('users/edit', { user: req.body.data, errors: er });
+        reply.redirect(app.reverse('editUser', { id: req.params.id }));
       }
     })
     .delete('/users/:id', { name: 'deleteUser' }, async (req, reply) => {

@@ -38,7 +38,8 @@ export default (app) => {
         const task = new app.objection.models.task();
         const statuses = await app.objection.models.status.query();
         const users = await app.objection.models.user.query();
-        reply.render('tasks/new', { task, statuses, users });
+        const labels = await app.objection.models.label.query();
+        reply.render('tasks/new', { task, statuses, users, labels });
       } else {
         req.flash('error', i18next.t('flash.authError'));
         reply.redirect(app.reverse('root'));
@@ -67,22 +68,30 @@ export default (app) => {
       try {
         console.log(req.body.data);
 
+        if (req.body.data.labels.length > 0) {
+          const labelsIds = req.body.data.labels.map((el) => +el);
+        }
+
+        const taskData = {
+          name: req.body.data.name,
+          description: req.body.data.description,
+          creatorId: req.user.id,
+        };
+
         if (req.body.data.statusId) {
-          req.body.data.statusId = +req.body.data.statusId;
+          taskData.statusId = +req.body.data.statusId;
         }
 
         if (req.body.data.executorId) {
-          req.body.data.executorId = +req.body.data.executorId;
+          taskData.executorId = +req.body.data.executorId;
         }
-
-        console.log(req.user);
-
-        req.body.data.creatorId = req.user.id;
-        console.log(req.body.data);
-        const task = await app.objection.models.task.fromJson(req.body.data);
-        console.log(task);
+        // console.log(req.body.data);
+        const task = await app.objection.models.task.fromJson(taskData);
+        // console.log(task);
 
         await app.objection.models.task.query().insert(task);
+        // console.log(db);
+
         req.flash('info', i18next.t('flash.tasks.create.success'));
         reply.redirect(app.reverse('tasks'));
       } catch (er) {
@@ -90,9 +99,15 @@ export default (app) => {
         console.log(er.data);
         const statuses = await app.objection.models.status.query();
         const users = await app.objection.models.user.query();
+        const labels = await app.objection.models.label.query();
         // req.body.data.creatorId = req.user.id;
-        reply.render('tasks/new', { task: req.body.data, statuses,
-          users, errors: er.data });
+        reply.render('tasks/new', {
+          task: req.body.data,
+          statuses,
+          users,
+          labels,
+          errors: er.data,
+        });
       }
     })
     .patch('/tasks/:id', { name: 'updateTask' }, async (req, reply) => {
