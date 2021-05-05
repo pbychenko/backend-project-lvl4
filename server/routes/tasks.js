@@ -84,34 +84,29 @@ export default (app) => {
       const task = await app.objection.models.task.fromJson(taskData);
       console.log(task);
       try {
-        // const dbTask = await app.objection.models.task.query().insert(task);
-        // if (req.body.data.labels.length > 0) {
-        //   const labelsIds = req.body.data.labels.map((el) => +el);
-        //   await Promise.all(labelsIds.map(async (id) => {
-        //     // console.log(id);
-        //     // console.log(dbTask.id);
-        //     const label = await app.objection.models.label.query().findById(id);
-        //     await dbTask.$relatedQuery('labels').relate(label);
-        //   }));
-        // }
-      // console.log(db);
         const modelTask = app.objection.models.task;
-        // if (req.body.data.labels.length > 0) {
-        //   const labelsIds = req.body.data.labels.map((el) => +el);
-        // }
-        await transaction(modelTask, async (modelTask) => {
-          const dbTask = await modelTask.query().insert(task);
+        const modelLabel = app.objection.models.label;
+        await transaction(modelTask, modelLabel, async (Task, Label) => {
+          const dbTask = await Task.query().insert(task);
+          // console.log('here');
           // console.log(dbTask);
           if (req.body.data.labels.length > 0) {
             const labelsIds = req.body.data.labels.map((el) => +el);
             const dbLabels = await Promise.all(labelsIds.map(async (id) => {
-              const label = await app.objection.models.label.query().findById(id);
-              return dbTask.$relatedQuery('labels').relate(label);
+              const label = await Label.query().findById(id);
+              // console.log('label');
+              // console.log(label);
+              // const con = await dbTask.$relatedQuery('labels').relate(label);
+              await dbTask.$relatedQuery('labels').relate(label);
+              // console.log('con');
+              // console.log(con);
+              // return con;
             }));
+            // console.log('here4');
+            // console.log(dbLabels);
             return dbLabels;
           }
           return dbTask;
-        //   return dbLabels;
         });
 
         req.flash('info', i18next.t('flash.tasks.create.success'));
