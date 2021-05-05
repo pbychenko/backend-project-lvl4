@@ -81,46 +81,57 @@ export default (app) => {
         taskData.executorId = +req.body.data.executorId;
       }
       console.log(taskData);
-      const task = await app.objection.models.task.fromJson(taskData);
-      console.log(task);
       try {
+        const task = await app.objection.models.task.fromJson(taskData);
+        console.log(task);
+      
         const modelTask = app.objection.models.task;
         const modelLabel = app.objection.models.label;
         await transaction(modelTask, modelLabel, async (Task, Label) => {
           const dbTask = await Task.query().insert(task);
           // console.log('here');
           // console.log(dbTask);
-          if (req.body.data.labels.length > 0) {
-            const labelsIds = req.body.data.labels.map((el) => +el);
-            const dbLabels = await Promise.all(labelsIds.map(async (id) => {
-              const label = await Label.query().findById(id);
-              // console.log('label');
-              // console.log(label);
-              // const con = await dbTask.$relatedQuery('labels').relate(label);
-              await dbTask.$relatedQuery('labels').relate(label);
-              // console.log('con');
-              // console.log(con);
-              // return con;
-            }));
-            // console.log('here4');
-            // console.log(dbLabels);
-            return dbLabels;
+          if (req.body.data.labels !== '') {
+            if (Array.isArray(req.body.data.labels)) {
+              const labelsIds = req.body.data.labels
+                .filter((el) => el !== '')
+                .map((el) => +el);
+              const dbLabels = await Promise.all(labelsIds.map(async (id) => {
+                const label = await Label.query().findById(id);
+                // console.log('label');
+                // console.log(label);
+                // const con = await dbTask.$relatedQuery('labels').relate(label);
+                await dbTask.$relatedQuery('labels').relate(label);
+                // console.log('con');
+                // console.log(con);
+                // return con;
+              }));
+              // console.log('here4');
+              // console.log(dbLabels);
+              return dbLabels;
+            }
+            const labelId = +req.body.data.labels;
+            const label = await Label.query().findById(labelId);
+            return dbTask.$relatedQuery('labels').relate(label);
           }
+          console.log('here')
           return dbTask;
         });
+        
 
         req.flash('info', i18next.t('flash.tasks.create.success'));
         reply.redirect(app.reverse('tasks'));
       } catch (er) {
+        console.log('in error block')
         req.flash('error', i18next.t('flash.tasks.create.error'));
-        console.log(er);
+        // console.log(er);
         console.log(er.data);
         const statuses = await app.objection.models.status.query();
         const users = await app.objection.models.user.query();
         const labels = await app.objection.models.label.query();
         // req.body.data.creatorId = req.user.id;
         reply.render('tasks/new', {
-          task: req.body.data,
+          task: taskData,
           statuses,
           users,
           labels,
