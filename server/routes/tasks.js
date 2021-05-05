@@ -1,5 +1,4 @@
 import i18next from 'i18next';
-import { forEach } from 'lodash';
 import { transaction } from 'objection';
 
 export default (app) => {
@@ -66,9 +65,8 @@ export default (app) => {
         reply.redirect(app.reverse('root'));
       }
     })
-    .post('/tasks', async (req, reply) => {      
+    .post('/tasks', async (req, reply) => {
       console.log(req.body.data);
-      
       const taskData = {
         name: req.body.data.name,
         description: req.body.data.description,
@@ -82,36 +80,46 @@ export default (app) => {
       if (req.body.data.executorId) {
         taskData.executorId = +req.body.data.executorId;
       }
-      // console.log(req.body.data);
+      console.log(taskData);
       const task = await app.objection.models.task.fromJson(taskData);
-      // console.log(task);
-      try {        
-      // await app.objection.models.task.query().insert(task);
-      // console.log(db);
-        const modelTask = app.objection.models.task;
+      console.log(task);
+      try {
+        const dbTask = await app.objection.models.task.query().insert(task);
         if (req.body.data.labels.length > 0) {
           const labelsIds = req.body.data.labels.map((el) => +el);
-        }
-        await transaction(modelTask, async (modelTask, trx) => {             
-          const dbTask = await trx('tasks').insert(task);
-          // console.log(dbTask);
-          if (!labelsIds) {
-            return dbTask;
-          }
-          
-          const dbLabels = await Promise.all(labelsIds.map(async (id) => {
-            const dbLabel = await dbTask.$relatedQuery('labels').insert({labelId: id});
-            return dbLabel;
+          await Promise.all(labelsIds.map(async (id) => {
+            // console.log(id);
+            // console.log(dbTask.id);
+            const label = await app.objection.models.label.query().findById(id);
+            await dbTask.$relatedQuery('labels').relate(label);
           }));
+        }
+      // console.log(db);
+        // const modelTask = app.objection.models.task;
+        // if (req.body.data.labels.length > 0) {
+        //   const labelsIds = req.body.data.labels.map((el) => +el);
+        // }
+        // await transaction(modelTask, async (modelTask, trx) => {
+        //   const dbTask = await trx('tasks').insert(task);
+        //   // console.log(dbTask);
+        //   if (!labelsIds) {
+        //     return dbTask;
+        //   }
+          
+        //   const dbLabels = await Promise.all(labelsIds.map(async (id) => {
+        //     const dbLabel = await dbTask.$relatedQuery('labels').insert({labelId: id});
+        //     return dbLabel;
+        //   }));
 
         
-          return dbLabels;
-        });
+        //   return dbLabels;
+        // });
 
         req.flash('info', i18next.t('flash.tasks.create.success'));
         reply.redirect(app.reverse('tasks'));
       } catch (er) {
         req.flash('error', i18next.t('flash.tasks.create.error'));
+        console.log(er);
         console.log(er.data);
         const statuses = await app.objection.models.status.query();
         const users = await app.objection.models.user.query();
