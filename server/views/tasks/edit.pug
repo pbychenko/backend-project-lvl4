@@ -4,11 +4,11 @@ block header
   = t('views.tasks.edit.edit')
 
 block content
-  //- p= typeof selectedStatus
   +formFor()(action=route('updateTask', { id: +`${task.id}`}) method='post')
     input(type='hidden' name='_method' value='patch')
     +input(task, 'name', t('views.tasks.name'), errors)(type="text")
     +input(task, 'description', t('views.tasks.new.description'), errors)(type="textarea")
-    +select(task, 'statusId', t('views.tasks.new.status'), errors, statuses, 'status', selectedStatus)
-    +select(task, 'executorId', t('views.tasks.new.executor'), errors, users, 'user', selectedExecutor)
+    +select(task, 'statusId', t('views.tasks.new.status'), errors, statuses, 'status', [selectedStatus])
+    +select(task, 'executorId', t('views.tasks.new.executor'), errors, users, 'user', [selectedExecutor])
+    +select(task, 'labels', t('views.tasks.new.labels'), errors, labels, 'labels', selectedLabels)(multiple)
     +submit(task)(value=t('views.tasks.edit.submit'))

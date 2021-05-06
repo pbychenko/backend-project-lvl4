@@ -22,7 +22,7 @@ mixin input(entity, propertyName, labelName, errors = {})
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 
-mixin select(entity, propertyName, labelName, errors = {}, options, optionName, selectedNumber,)
+mixin select(entity, propertyName, labelName, errors = {}, options, optionName, selectedNumbers = [],)
   - propertyErrors = _.get(errors, propertyName)
   - classLine = 'form-control' + (_.isEmpty(errors) ? '' : ' is-invalid')
   - inputId = getInputId(propertyName)
@@ -38,7 +38,7 @@ mixin select(entity, propertyName, labelName, errors = {}, options, optionName, 
     )&attributes(attributes) 
       option(selected)
       each option in options
-        option(value=option.id selected=(option.id === selectedNumber))
+        option(value=option.id selected=(selectedNumbers.includes(option.id)))
           if isStatusOrLabel
             =option.name
           else

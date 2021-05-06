@@ -51,14 +51,19 @@ export default (app) => {
         const task = await app.objection.models.task.query().findById(+req.params.id);
         const statuses = await app.objection.models.status.query();
         const users = await app.objection.models.user.query();
+        const labels = await app.objection.models.label.query();
         const taskStatus = await task.$relatedQuery('status');
+        const taskLabels = await task.$relatedQuery('labels');
         const taskExecutor = await task.$relatedQuery('executor');
+        console.log(taskLabels);
         reply.render('tasks/edit', {
           task,
           statuses,
           users,
+          labels,
           selectedStatus: taskStatus.id,
-          selectedExecutor: taskExecutor.id,
+          selectedExecutor: taskExecutor ? taskExecutor.id : '',
+          selectedLabels: taskLabels.map((taskLabel) => taskLabel.id),
         });
       } else {
         req.flash('error', i18next.t('flash.authError'));
@@ -114,10 +119,9 @@ export default (app) => {
             const label = await Label.query().findById(labelId);
             return dbTask.$relatedQuery('labels').relate(label);
           }
-          console.log('here')
+          // console.log('here')
           return dbTask;
         });
-        
 
         req.flash('info', i18next.t('flash.tasks.create.success'));
         reply.redirect(app.reverse('tasks'));
