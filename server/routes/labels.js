@@ -56,7 +56,7 @@ export default (app) => {
         } catch (er) {
           req.flash('error', i18next.t('flash.labels.edit.error'));
           console.log(er);
-          reply.render('labels/edit', { label: req.body.data, errors: er.data });
+          reply.render('labels/edit', { label: { ...req.body.data, id: req.params.id }, errors: er.data });
           return reply;
         }
       } else {
