@@ -195,7 +195,8 @@ export default (app) => {
           const taskLabels = await task.$relatedQuery('labels');
           console.log(req.body.data);
           reply.render('tasks/edit', {
-            task: { ...req.body.data, id: req.params.id },
+            // task: { ...req.body.data, id: req.params.id },
+            task: { ...taskData, id: req.params.id },
             statuses,
             users,
             labels,
