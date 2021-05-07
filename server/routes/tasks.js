@@ -188,34 +188,15 @@ export default (app) => {
           console.log(req.body.data);
           reply.render('tasks/edit', {
             // task: { ...req.body.data, id: req.params.id },
-            task: { ...taskData, id: req.params.id },
+            task: { ...req.body.data, id: req.params.id }, 
             statuses,
-            users,
+            users, 
             labels,
             selectedStatus: req.body.data.statusId,
             selectedExecutor: req.body.data.executorId,
             selectedLabels: taskLabels.map((taskLabel) => taskLabel.id),
             errors: er.data,
           });
-
-        //   const task = await app.objection.models.task.query().findById(+req.params.id);
-        // const statuses = await app.objection.models.status.query();
-        // const users = await app.objection.models.user.query();
-        // const labels = await app.objection.models.label.query();
-        // const taskStatus = await task.$relatedQuery('status');
-        // const taskLabels = await task.$relatedQuery('labels');
-        // const taskExecutor = await task.$relatedQuery('executor');
-        // // console.log(taskLabels);
-        // reply.render('tasks/edit', {
-        //   task,
-        //   statuses,
-        //   users,
-        //   labels,
-        //   selectedStatus: taskStatus.id,
-        //   selectedExecutor: taskExecutor ? taskExecutor.id : '',
-        //   selectedLabels: taskLabels.map((taskLabel) => taskLabel.id),
-        // });
-
 
           return reply;
         }
