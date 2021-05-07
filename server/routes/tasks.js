@@ -43,7 +43,7 @@ export default (app) => {
         const labels = await app.objection.models.label.query();
         reply.render('tasks/new', { task, statuses, users, labels });
       } else {
-        req.flash('error', i18next.t('flash.authError'));
+        req.flash('error', i18next.t('flash.authError')); 
         reply.redirect(app.reverse('root'));
       }
     })
@@ -53,16 +53,14 @@ export default (app) => {
         const statuses = await app.objection.models.status.query();
         const users = await app.objection.models.user.query();
         const labels = await app.objection.models.label.query();
-        const taskStatus = await task.$relatedQuery('status');
         const taskLabels = await task.$relatedQuery('labels');
         const taskExecutor = await task.$relatedQuery('executor');
-        // console.log(taskLabels);
         reply.render('tasks/edit', {
           task,
           statuses,
           users,
           labels,
-          selectedStatus: taskStatus.id,
+          selectedStatus: task.statusId,
           selectedExecutor: taskExecutor ? taskExecutor.id : '',
           selectedLabels: taskLabels.map((taskLabel) => taskLabel.id),
         });
@@ -72,7 +70,7 @@ export default (app) => {
       }
     })
     .post('/tasks', async (req, reply) => {
-      console.log(req.body.data);
+      // console.log(req.body.data);
       const taskData = {
         name: req.body.data.name,
         description: req.body.data.description,
@@ -138,47 +136,41 @@ export default (app) => {
             description: req.body.data.description,
           };
     
-          if (req.body.data.statusId) {
-            taskData.statusId = +req.body.data.statusId;
-          }
+          // if (req.body.data.statusId) {
+          taskData.statusId = req.body.data.statusId ? +req.body.data.statusId : '';
+          // }
+
+          taskData.executorId = req.body.data.executorId ? +req.body.data.executorId : '';
     
-          if (req.body.data.executorId) {
-            taskData.executorId = +req.body.data.executorId;
-          }
+          // if (req.body.data.executorId) {
+          //   taskData.executorId = +req.body.data.executorId;
+          // }
+
+          console.log(req.body.data);
+          console.log(taskData);
+
 
           // await task.$query().patch(req.body.data);
           const modelTask = app.objection.models.task;
           const modelLabel = app.objection.models.label;
           const datalabels = (Array.isArray(req.body.data.labels) ? req.body.data.labels
             : [req.body.data.labels]);
-          console.log(datalabels);
           const newTaskLabelsIds = datalabels.filter((el) => el !== '' && el).map((el) => +el);
-          console.log(newTaskLabelsIds);
-
           await transaction(modelTask, modelLabel, async (Task, Label) => {
-            console.log('begin');
+            // console.log('begin');
             const task = await Task.query().findById(+req.params.id);
-
             const oldTaskLabelsIds = (await task.$relatedQuery('labels')).map((el) => el.id);
-            // console.log(oldTaskLabelsIds);
-            // console.log(newTaskLabelsIds);
             const labelIdsForDeletion = _.difference(oldTaskLabelsIds, newTaskLabelsIds);
-            // console.log(labelIdsForDeletion);
             const labelIdsForInsertion = _.difference(newTaskLabelsIds, oldTaskLabelsIds);
-            // console.log(labelIdsForInsertion);
 
             await task.$query().patch(taskData);
-            // console.log('task done');
-            // console.log(dbTask);
             await Promise.all(labelIdsForDeletion.map(async (id) => {
               await task.$relatedQuery('labels').unrelate().where('labelId', id);
             }));
-            // console.log('deleteDone');
             const insertLabels = await Promise.all(labelIdsForInsertion.map(async (id) => {
               const label = await Label.query().findById(id);
               await task.$relatedQuery('labels').relate(label);
             }));
-            console.log('insertDone');
             return insertLabels;
           });
 
