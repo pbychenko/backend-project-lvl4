@@ -46,6 +46,26 @@ mixin select(entity, propertyName, labelName, errors = {}, options, optionName, 
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 
+mixin searchSelect(propertyName, labelName, errors = {}, options, optionName, selectedNumbers = [],)
+  - inputId = getInputId(propertyName)
+  - isStatusOrLabel = (optionName === 'status' || optionName === 'labels')
+  .form-group(class=(errors[propertyName] && 'has-danger'))
+    label(
+      for= inputId
+    )= labelName
+    select(
+      id= inputId
+      name=propertyName
+      class='form-control'
+    )&attributes(attributes) 
+      option(selected)
+      each option in options
+        option(value=option.id selected=(selectedNumbers.includes(option.id)))
+          if isStatusOrLabel
+            =option.name
+          else
+            =option.fullName()
+
 mixin submit(form = null)
   .form-group
     input(class='btn btn-primary' type='submit')&attributes(attributes)

@@ -63,4 +63,38 @@ export default class Task extends unique(Model) {
       },
     },
   }
+
+  static modifiers = {
+    defaultSelects(query) {
+      return query;
+    },
+
+    filterByStatus(query, statusId) {
+      if (statusId) {
+        return query.where('statusId', statusId);
+      }
+      return query;
+    },
+
+    filterByExecutor(query, executorId) {
+      if (executorId) {
+        return query.where('executorId', executorId);
+      }
+      return query;
+    },
+
+    filterByLabel(query, labelId) {
+      if (labelId) {
+        return query.withGraphJoined('labels').where('labelId', labelId);
+      }
+      return query;
+    },
+
+    filterByCreator(query, creatorId) {
+      if (creatorId) {
+        return query.where('creatorId', creatorId);
+      }
+      return query;
+    },
+  };
 }

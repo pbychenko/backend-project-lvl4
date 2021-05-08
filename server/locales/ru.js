@@ -134,6 +134,9 @@ module.exports = {
         status: 'Статус',
         creator: 'Автор',
         executor: 'Исполнитель',
+        isCreator: 'Только мои задачи',
+        show: 'Показать',
+        label: 'Метка',
         createdAt: 'Дата создания',
         new: {
           name: 'Наименование',

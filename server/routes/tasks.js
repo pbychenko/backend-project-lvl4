@@ -7,8 +7,21 @@ export default (app) => {
     .get('/tasks', { name: 'tasks' }, async (req, reply) => {
       if (req.isAuthenticated()) {
         try {
-          const tasks = await app.objection.models.task.query();
-          // console.log(tasks)
+          const { status, executor, label, isCreatorUser } = req.query;
+          console.log(req.query);
+          const creator = isCreatorUser ? req.user.id : '';
+
+          // const tasks = await app.objection.models.task.query();
+          const statuses = await app.objection.models.status.query();
+          const users = await app.objection.models.user.query();
+          const labels = await app.objection.models.label.query();
+          const tasks = await app.objection.models.task.query()
+            .modify('defaultSelects')
+            .modify('filterByStatus', status)
+            .modify('filterByExecutor', executor)
+            .modify('filterByLabel', label)
+            .modify('filterByCreator', creator);
+
           const tasksForIndex = await Promise.all(tasks.map(async (task) => {
             const taskStatus = await task.$relatedQuery('status');
             const taskCreator = await task.$relatedQuery('creator');
@@ -26,7 +39,7 @@ export default (app) => {
             return { ...task, status: taskStatus.name, creator: taskCreator.fullName() };
           }));
 
-          reply.render('tasks/index', { tasks: tasksForIndex });
+          reply.render('tasks/index', { tasks: tasksForIndex, statuses, users, labels, selectedStatus: +status, selectedExecutor: +executor, selectedLabel: +label, isCreatorUser });
         } catch (er) {
           console.log(er);
         }
@@ -130,27 +143,14 @@ export default (app) => {
     .patch('/tasks/:id', { name: 'updateTask' }, async (req, reply) => {
       if (req.isAuthenticated()) {
         try {
-          // const task = await app.objection.models.task.query().findById(+req.params.id);
           const taskData = {
             name: req.body.data.name,
             description: req.body.data.description,
           };
-    
-          // if (req.body.data.statusId) {
+
           taskData.statusId = req.body.data.statusId ? +req.body.data.statusId : '';
-          // }
-
           taskData.executorId = req.body.data.executorId ? +req.body.data.executorId : '';
-    
-          // if (req.body.data.executorId) {
-          //   taskData.executorId = +req.body.data.executorId;
-          // }
 
-          console.log(req.body.data);
-          console.log(taskData);
-
-
-          // await task.$query().patch(req.body.data);
           const modelTask = app.objection.models.task;
           const modelLabel = app.objection.models.label;
           const datalabels = (Array.isArray(req.body.data.labels) ? req.body.data.labels
@@ -187,10 +187,9 @@ export default (app) => {
           const taskLabels = await task.$relatedQuery('labels');
           console.log(req.body.data);
           reply.render('tasks/edit', {
-            // task: { ...req.body.data, id: req.params.id },
-            task: { ...req.body.data, id: req.params.id }, 
+            task: { ...req.body.data, id: req.params.id },
             statuses,
-            users, 
+            users,
             labels,
             selectedStatus: req.body.data.statusId,
             selectedExecutor: req.body.data.executorId,
