@@ -49,8 +49,6 @@ export default (app) => {
       } catch (er) {
         req.flash('error', i18next.t('flash.users.edit.error'));
         console.log(er);
-        console.log(req.body.data)
-        console.log(req.params)
         reply.render('users/edit', { user: { ...req.body.data, id: req.params.id }, errors: er.data });
         return reply;
         // reply.redirect(app.reverse('editUser', { id: req.params.id }));

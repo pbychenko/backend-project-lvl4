@@ -43,6 +43,32 @@ describe('test users CRUD', () => {
     expect(response.statusCode).toBe(200);
   });
 
+  it('edit', async () => {
+    const params = testData.users.existing;
+    const user = await models.user.query().findOne({ email: params.email });
+
+    const responseSignIn = await app.inject({
+      method: 'POST',
+      url: app.reverse('session'),
+      payload: {
+        data: params,
+      },
+    });
+
+    expect(responseSignIn.statusCode).toBe(302);
+    const [sessionCookie] = responseSignIn.cookies;
+    const { name, value } = sessionCookie;
+    const cookie = { [name]: value };
+
+    const response = await app.inject({
+      method: 'GET',
+      url: app.reverse('editUser', { id: +user.id }),
+      cookies: cookie,
+    });
+
+    expect(response.statusCode).toBe(200);
+  });
+
   it('create', async () => {
     const params = testData.users.new;
     const response = await app.inject({
@@ -60,6 +86,53 @@ describe('test users CRUD', () => {
     };
     const user = await models.user.query().findOne({ email: params.email });
     expect(user).toMatchObject(expected);
+  });
+
+  it('try to create 2 equal users', async () => {
+    const params = testData.users.new;
+    const response = await app.inject({
+      method: 'POST',
+      url: app.reverse('users'),
+      payload: {
+        data: params,
+      },
+    });
+
+    expect(response.statusCode).toBe(302);
+    const newResponse = await app.inject({
+      method: 'POST',
+      url: app.reverse('users'),
+      payload: {
+        data: params,
+      },
+    });
+    expect(newResponse.statusCode).toBe(200);
+  });
+
+  it('delete', async () => {
+    const params = testData.users.existing;
+    const user = await models.user.query().findOne({ email: params.email });
+
+    const responseSignIn = await app.inject({
+      method: 'POST',
+      url: app.reverse('session'),
+      payload: {
+        data: params,
+      },
+    });
+
+    expect(responseSignIn.statusCode).toBe(302);
+    const [sessionCookie] = responseSignIn.cookies;
+    const { name, value } = sessionCookie;
+    const cookie = { [name]: value };
+
+    const response = await app.inject({
+      method: 'DELETE',
+      url: app.reverse('deleteUser', { id: +user.id }),
+      cookies: cookie,
+    });
+
+    expect(response.statusCode).toBe(302);
   });
 
   afterEach(async () => {
