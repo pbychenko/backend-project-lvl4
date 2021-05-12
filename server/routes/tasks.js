@@ -7,8 +7,12 @@ export default (app) => {
     .get('/tasks', { name: 'tasks' }, async (req, reply) => {
       if (req.isAuthenticated()) {
         try {
-          const { status, executor, label, isCreatorUser } = req.query;
-          console.log(req.query);
+          const {
+            status,
+            executor,
+            label,
+            isCreatorUser,
+          } = req.query;
           const creator = isCreatorUser ? req.user.id : '';
 
           // const tasks = await app.objection.models.task.query();
@@ -54,9 +58,14 @@ export default (app) => {
         const statuses = await app.objection.models.status.query();
         const users = await app.objection.models.user.query();
         const labels = await app.objection.models.label.query();
-        reply.render('tasks/new', { task, statuses, users, labels });
+        reply.render('tasks/new', {
+          task,
+          statuses,
+          users,
+          labels,
+        });
       } else {
-        req.flash('error', i18next.t('flash.authError')); 
+        req.flash('error', i18next.t('flash.authError'));
         reply.redirect(app.reverse('root'));
       }
     })
@@ -83,7 +92,6 @@ export default (app) => {
       }
     })
     .post('/tasks', async (req, reply) => {
-      // console.log(req.body.data);
       const taskData = {
         name: req.body.data.name,
         description: req.body.data.description,
