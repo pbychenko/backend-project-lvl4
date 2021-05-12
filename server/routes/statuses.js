@@ -56,7 +56,6 @@ export default (app) => {
         } catch (er) {
           req.flash('error', i18next.t('flash.statuses.edit.error'));
           reply.render('statuses/edit', { status: { ...req.body.data, id: req.params.id }, errors: er.data });
-          // reply.redirect(app.reverse('editStatus', { id: req.params.id }));
           return reply;
         }
       } else {
@@ -69,6 +68,7 @@ export default (app) => {
       if (req.isAuthenticated()) {
         const status = await app.objection.models.status.query().findById(+req.params.id);
         const tasks = await status.$relatedQuery('tasks');
+
         if (tasks.length === 0) {
           try {
             await app.objection.models.status.query().deleteById(+req.params.id);
@@ -79,7 +79,6 @@ export default (app) => {
           }
         } else {
           req.flash('error', i18next.t('flash.statuses.tasksError'));
-          reply.redirect(app.reverse('statuses'));
         }
       } else {
         req.flash('error', i18next.t('flash.authError'));

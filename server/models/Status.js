@@ -15,7 +15,7 @@ export default class Status extends unique(Model) {
       required: ['name'],
       properties: {
         id: { type: 'integer' },
-        name: { type: 'string', minLength: 4, maxLength: 20 },
+        name: { type: 'string', minLength: 1 },
       },
     };
   }

@@ -40,18 +40,16 @@ export default (app) => {
       try {
         if (req.isAuthenticated() && req.user.id === +req.params.id) {
           const user = await app.objection.models.user.query().findById(+req.params.id);
-          console.log(req.body.data);
           await user.$query().patch(req.body.data);
           req.flash('info', i18next.t('flash.users.edit.success'));
         }
-        reply.redirect(app.reverse('root'));
+        reply.redirect(app.reverse('users'));
         return reply;
       } catch (er) {
         req.flash('error', i18next.t('flash.users.edit.error'));
         console.log(er);
         reply.render('users/edit', { user: { ...req.body.data, id: req.params.id }, errors: er.data });
         return reply;
-        // reply.redirect(app.reverse('editUser', { id: req.params.id }));
       }
     })
     .delete('/users/:id', { name: 'deleteUser' }, async (req, reply) => {
