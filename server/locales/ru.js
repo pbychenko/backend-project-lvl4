@@ -90,6 +90,8 @@ module.exports = {
         new: {
           signIn: 'Вход',
           submit: 'Войти',
+          email: 'Email',
+          password: 'Пароль',
         },
       },
       users: {
