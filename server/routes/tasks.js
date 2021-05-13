@@ -96,6 +96,23 @@ export default (app) => {
         reply.redirect(app.reverse('root'));
       }
     })
+    .get('/tasks/:id', { name: 'showTask' }, async (req, reply) => {
+      if (req.isAuthenticated()) {
+        const task = await app.objection.models.task.query().findById(+req.params.id);
+        const taskLabels = await task.$relatedQuery('labels');
+        const taskExecutor = await task.$relatedQuery('executor');
+        const taskStatus = await task.$relatedQuery('status');
+        reply.render('tasks/show', {
+          task,
+          taskStatus: taskStatus.name,
+          taskExecutor: taskExecutor ? taskExecutor.fullName() : '',
+          taskLabels: taskLabels.map((taskLabel) => taskLabel.name),
+        });
+      } else {
+        req.flash('error', i18next.t('flash.authError'));
+        reply.redirect(app.reverse('root'));
+      }
+    })
     .post('/tasks', async (req, reply) => {
       const taskData = {
         name: req.body.data.name,

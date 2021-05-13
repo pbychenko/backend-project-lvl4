@@ -29,7 +29,8 @@ block content
         each task in tasks
           tr          
             td= task.id
-            td= task.name
+            td
+              a.nav-link(href=route('showTask', { id: +`${task.id}`}))= task.name
             td= task.status
             td= task.creator
             td= task.executor

@@ -1,0 +1,21 @@
+extends ../layouts/application.pug
+
+block content
+  .card
+  .card-body
+    h5.card-title= task.name
+    p.card-text
+      = task.description
+    p.card-text
+      = taskExecutor
+    p.card-text
+      = taskStatus
+    p.card-text
+      = formatDate(task.createdAt)
+    ul.list-group
+      each label in taskLabels
+        li.list-group-item= label
+    a.nav-link(href=route('editTask', { id: +`${task.id}`}))= t('views.tasks.edit.submit')
+    +formFor()(action=route('deleteTask', { id: +`${task.id}`}) method='post')
+      input(type='hidden' name='_method' value='delete')
+      +submit(user)(value=t('views.tasks.delete.submit'))
