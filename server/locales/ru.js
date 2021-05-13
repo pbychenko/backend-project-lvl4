@@ -87,6 +87,7 @@ module.exports = {
       },
     },
     views: {
+      new: 'Создать',
       session: {
         new: {
           signIn: 'Вход',

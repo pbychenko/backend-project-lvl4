@@ -10,4 +10,4 @@ block content
     +select(task, 'statusId', t('views.tasks.new.status'), errors,  statuses, 'status')
     +select(task, 'executorId', t('views.tasks.new.executor'), errors, users, 'users')
     +select(task, 'labels', t('views.tasks.new.labels'), errors, labels, 'labels')(multiple)
-    +submit(task)(value=t('views.tasks.new.submit'))
+    +submit(task)(value=t('views.new'))
