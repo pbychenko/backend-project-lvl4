@@ -17,6 +17,9 @@ export default (app) => {
       if (req.isAuthenticated() && req.user.id === +req.params.id) {
         const user = await app.objection.models.user.query().findById(+req.params.id);
         reply.render('users/edit', { user });
+      } else if (req.isAuthenticated()) {
+        req.flash('error', i18next.t('flash.users.authError'));
+        reply.redirect(app.reverse('users'));
       } else {
         req.flash('error', i18next.t('flash.authError'));
         reply.redirect(app.reverse('users'));

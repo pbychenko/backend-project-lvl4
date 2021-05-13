@@ -55,6 +55,7 @@ export default (app) => {
         req.flash('error', i18next.t('flash.authError'));
         reply.redirect(app.reverse('root'));
       }
+      return reply;
     })
     .get('/tasks/new', { name: 'newTask' }, async (req, reply) => {
       if (req.isAuthenticated()) {
