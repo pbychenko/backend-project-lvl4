@@ -120,7 +120,7 @@ module.exports = {
         name: 'Наименование',
         createdAt: 'Дата создания',
         new: {
-          submit: 'Создать',
+          submit: 'Создать статус',
           signUp: 'Создание статуса',
         },
         edit: {
