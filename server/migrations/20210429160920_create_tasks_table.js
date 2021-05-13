@@ -1,4 +1,3 @@
-
 exports.up = (knex) => (
   knex.schema.createTable('tasks', (table) => {
     table.increments('id').primary();
@@ -9,7 +8,7 @@ exports.up = (knex) => (
     table.integer('executor_id').references('id').inTable('users').defaultTo(null);
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
-  })  
+  })
 );
 
-exports.down = (knex) => knex.schema.dropTable('tasks')
+exports.down = (knex) => knex.schema.dropTable('tasks');
