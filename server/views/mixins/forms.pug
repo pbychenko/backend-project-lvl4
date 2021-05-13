@@ -22,6 +22,24 @@ mixin input(entity, propertyName, labelName, errors = {})
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 
+mixin textarea(entity, propertyName, labelName, errors = {})
+  - propertyErrors = _.get(errors, propertyName)
+  - classLine = 'form-control' + (_.isEmpty(errors) ? '' : ' is-invalid')
+  - inputId = getInputId(propertyName)
+  .form-group(class=(errors[propertyName] && 'has-danger'))
+    label(
+      for= inputId
+    )= labelName
+    textarea(
+      id= inputId
+      name=getInputName(propertyName)
+      class=classLine
+      rows="3"      
+    )&attributes(attributes)
+      =_.get(entity, propertyName, '')
+    if !_.isEmpty(propertyErrors)
+      .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
+
 mixin select(entity, propertyName, labelName, errors = {}, options, optionName, selectedNumbers = [],)
   - propertyErrors = _.get(errors, propertyName)
   - classLine = 'form-control' + (_.isEmpty(errors) ? '' : ' is-invalid')
