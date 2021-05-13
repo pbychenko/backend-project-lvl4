@@ -107,7 +107,7 @@ module.exports = {
           signUp: 'Регистрация',
         },
         edit: {
-          submit: 'Редактировать',
+          submit: 'Изменить',
           edit: 'Редактирование',
         },
         delete: {
@@ -123,7 +123,7 @@ module.exports = {
           signUp: 'Создание статуса',
         },
         edit: {
-          submit: 'Редактировать',
+          submit: 'Изменить',
           edit: 'Редактирование',
         },
         delete: {
@@ -150,7 +150,7 @@ module.exports = {
           signUp: 'Создание задачи',
         },
         edit: {
-          submit: 'Редактировать',
+          submit: 'Изменить',
           edit: 'Редактирование',
         },
         delete: {
