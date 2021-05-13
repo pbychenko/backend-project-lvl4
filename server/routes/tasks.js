@@ -101,10 +101,12 @@ export default (app) => {
         const task = await app.objection.models.task.query().findById(+req.params.id);
         const taskLabels = await task.$relatedQuery('labels');
         const taskExecutor = await task.$relatedQuery('executor');
+        const taskCreator = await task.$relatedQuery('creator');
         const taskStatus = await task.$relatedQuery('status');
         reply.render('tasks/show', {
           task,
           taskStatus: taskStatus.name,
+          taskCreator: taskCreator ? taskCreator.fullName() : '',
           taskExecutor: taskExecutor ? taskExecutor.fullName() : '',
           taskLabels: taskLabels.map((taskLabel) => taskLabel.name),
         });
