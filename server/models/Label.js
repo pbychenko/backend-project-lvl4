@@ -4,7 +4,7 @@ import { Model } from 'objection';
 import path from 'path';
 import objectionUnique from 'objection-unique';
 
-const unique = objectionUnique({ fields: ['email'] });
+const unique = objectionUnique({ fields: ['name'] });
 
 export default class Label extends unique(Model) {
   static get tableName() {
@@ -17,7 +17,7 @@ export default class Label extends unique(Model) {
       required: ['name'],
       properties: {
         id: { type: 'integer' },
-        name: { type: 'string', minLength: 1, maxLength: 200 },
+        name: { type: 'string', minLength: 1 },
       },
     };
   }
