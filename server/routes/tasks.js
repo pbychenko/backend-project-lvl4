@@ -104,11 +104,13 @@ export default (app) => {
         const taskCreator = await task.$relatedQuery('creator');
         const taskStatus = await task.$relatedQuery('status');
         reply.render('tasks/show', {
-          task,
-          taskStatus: taskStatus.name,
-          taskCreator: taskCreator ? taskCreator.fullName() : '',
-          taskExecutor: taskExecutor ? taskExecutor.fullName() : '',
-          taskLabels: taskLabels.map((taskLabel) => taskLabel.name),
+          task: {
+            ...task,
+            status: taskStatus.name,
+            creator: taskCreator ? taskCreator.fullName() : '',
+            executor: taskExecutor ? taskExecutor.fullName() : '',
+            labels: taskLabels.map((taskLabel) => taskLabel.name),
+          },
         });
       } else {
         req.flash('error', i18next.t('flash.authError'));
