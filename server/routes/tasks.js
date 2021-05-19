@@ -169,7 +169,7 @@ export default (app) => {
             name: req.body.data.name,
             description: req.body.data.description,
             statusId: req.body.data.statusId ? +req.body.data.statusId : '',
-            executorId: req.body.data.executorId ? +req.body.data.executorId : '',
+            executorId: req.body.data.executorId ? +req.body.data.executorId : null,
           };
 
           const taskNewLabels = (Array.isArray(req.body.data.labels) ? req.body.data.labels
