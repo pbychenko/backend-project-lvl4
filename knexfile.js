@@ -24,6 +24,7 @@ module.exports = {
   production: {
     client: 'pg',
     connection: `${process.env.DATABASE_URL}?ssl=true`,
+    ssl: { rejectUnauthorized: false },
     // client: 'sqlite3',
     // connection: {
     //   filename: './database.sqlite',
